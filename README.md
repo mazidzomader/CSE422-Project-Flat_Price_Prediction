@@ -1,6 +1,7 @@
-# CSE422 – Artificial Intelligence Lab Project
-### 🎓 Academic Success Prediction  
-
+# <h1 align = "center">CSE422 – Artificial Intelligence </h1>
+## <h2 align = "center"> 🎓 Academic Success Prediction  </h2>
+## <h3 align = "center"> Lab Project </h3>
+---
 
 This project focuses on applying machine learning techniques to **predict students’ academic outcomes**—Dropout, Enrolled, or Graduate—using demographic, socio-economic, and academic history data. It serves as a hands-on component of the **CSE422: Artificial Intelligence** course.
 
