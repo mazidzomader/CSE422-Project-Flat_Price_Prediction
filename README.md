@@ -17,3 +17,9 @@ The dataset (`academic_success_dataset.csv`) contains **4,000+ student records**
 - **Academic background:** Previous qualification & grade, Admission grade  
 - **Administrative:** Application mode, Attendance type, Tuition fee status  
 - **Economic indicators:** Inflation rate, Unemployment rate, GDP  
+
+<p align="left">
+  <a href="https://colab.research.google.com/github/sample_repo/sample_notebook.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/, width=300, height=50/>
+  </a>
+</p>
