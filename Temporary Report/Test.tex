@@ -1,0 +1,142 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {\chaptername\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+
+
+\begin{document}
+
+% ------------------------------------------------
+% COVER PAGE (no page number)
+% ------------------------------------------------
+\pagenumbering{gobble} % hide page number
+
+\begin{titlepage}
+    \begin{center}
+    
+        % ---- LOGO ----
+        \vspace*{1cm}
+        \includegraphics[width=6cm]{logo.png} % replace logo.png with your logo file
+        \vspace{1cm}
+
+        % ---- UNIVERSITY / DEPARTMENT ----
+        {\Large \textbf{BRAC University}}\\[0.3cm]
+        {\large Department of Computer Science and Engineering}\\[1.5cm]
+
+        % ---- PROJECT TITLE ----
+        \rule{\textwidth}{1pt}\\[0.5cm]
+        {\Huge \textbf{Artificial Intelligence}}\\[0.3cm]
+        {\large \textit{Course Project Report}}\\[0.5cm]
+        \rule{\textwidth}{1pt}\\[2cm]
+
+        % ---- STUDENT DETAILS ----
+        \begin{flushleft}
+        \noindent\textbf{Student Information:}\\[0.3cm]
+
+        \noindent
+        \begin{minipage}{0.49\textwidth}
+            \raggedright
+            \textbf{Name: Abdullah Al Mazid Zomader}\\
+            ID: 24241189\\
+            Section: 20
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.49\textwidth}
+            \raggedright
+            \textbf{Name: Avisheek Pal Joy}\\
+            ID: 23101115\\
+            Section: 20
+        \end{minipage}
+
+        \vspace{1cm}
+
+        % Add more students if group project:
+        % Name: Another Student\\
+        % ID: 23456789\\
+        % Section: XYZ\\[0.8cm]
+
+        \textbf{Course Information:}\\[0.2cm]
+        Course Code: CSE-422\\
+        Course Title: Artificial Intelligence\\[0.8cm]
+
+        Date: 05 January, 2026
+        \end{flushleft}
+
+        \vfill
+    \end{center}
+\end{titlepage}
+
+% ------------------------------------------------
+% TABLE OF CONTENTS (Roman page numbers)
+% ------------------------------------------------
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\tableofcontents
+
+\clearpage
+
+% ------------------------------------------------
+% MAIN CONTENT (Arabic page numbers)
+% ------------------------------------------------
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\chapter{Introduction}
+Housing prices are influenced by multiple factors such as location, size, number of rooms, and available amenities. Accurately estimating property value is important for buyers, sellers, and real estate analysts, as it helps in making informed financial decisions. However, manually analyzing these factors can be time-consuming and subjective, often leading to inconsistent pricing judgments.
+
+This project aims to address this issue by developing a machine learning–based classification system that predicts the price category of a flat (such as low, medium, or high) based on its key attributes. Instead of predicting an exact price, the model classifies properties into meaningful categories, making the results easier to interpret and more practical for decision-making.
+
+The motivation behind this project is to explore how data-driven approaches can improve transparency and efficiency in real estate pricing. By leveraging historical housing data and applying classification algorithms, the system seeks to uncover patterns between property features and price ranges. This can assist potential buyers in budgeting, help sellers set competitive prices, and provide a foundation for further predictive analytics in the real estate domain.
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[width=1.0\textwidth]{hand.png} % replace with your file name
+%     \caption{Person in a hand.}
+%     \label{fig:myimage}
+% \end{figure}
+
+
+\chapter{Dataset description}
+Write content here.
+
+\chapter{Dataset pre-processing}
+Write content here.
+
+\chapter{Dataset splitting}
+Write content here.
+
+\chapter{Model training \& testing}
+Write content here.
+\section{k-Nearest Neighbors}
+Write content here.
+\section{Decision Tree}
+Write content here.
+\section{Logistic Regression}
+Write content here.
+\section{Linear Regression}
+Write content here.
+\section{Naive Bayes}
+Write content here.
+\section{Neural Network}
+Write content here.
+\pagebreak
+\section{K-Means Clustering}
+Write content here.
+
+\chapter{Model selection/Comparison analysis}
+Write content here.
+
+
+\chapter{Conclusion}
+Write content here.
+
+\end{document}
