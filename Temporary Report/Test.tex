@@ -5,6 +5,22 @@
 \usepackage{setspace}
 \usepackage{titlesec}
 \usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}   % for \captionof
+\usepackage{placeins}  % for \FloatBarrier
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+
+% safer caption spacing (prevents caption colliding with table border)
+\setlength{\abovecaptionskip}{8pt}
+\setlength{\belowcaptionskip}{6pt}
+
+% a bit more breathing room in tables
+\renewcommand{\arraystretch}{1.15}
+
 \titleformat{\chapter}[display]
   {\normalfont\huge\bfseries}
   {\chaptername\ \thechapter}{20pt}{\Huge}
@@ -106,37 +122,533 @@ The motivation behind this project is to explore how data-driven approaches can 
 
 
 \chapter{Dataset description}
-Write content here.
+The dataset used in this project contains information related to residential properties. 
+It consists of 100 data points, where each data point represents a single housing unit. 
+The dataset includes 12 features in total, out of which 11 are input features and 1 is the output feature. 
+The output feature is \texttt{Price\_Category}, which represents the price range of the property and takes three possible values: Low, Medium, and High.
+\section{Class Distribution and Imbalance Analysis}
+
+To examine whether the dataset is balanced, the distribution of the target variable \texttt{Price\_Category} was analyzed. The dataset contains a total of 1200 instances after preprocessing, distributed as follows:
+\begin{itemize}
+    \item Medium: 413 instances
+    \item Low: 402 instances
+    \item High: 385 instances
+\end{itemize}
+
+The class distribution indicates that the dataset is \textbf{approximately balanced}, as the difference in the number of instances across the three classes is relatively small. Therefore, severe class imbalance is not present, and no aggressive resampling techniques were required. However, stratified data splitting was used to preserve class proportions during training and evaluation.
+
+\section{Categorical Feature Encoding}
+
+Prior to analysis and model training, categorical features were converted into numerical representations. Binary categorical variables (\texttt{Has\_Balcony}, \texttt{Parking\_Available}, and \texttt{Nearby\_Schools}) were encoded using label encoding. The feature \texttt{Location} was ordinally encoded as Countryside (0), Suburbs (1), and City Center (2). The ordinal feature \texttt{Security\_Level} was encoded as Low (0), Medium (1), and High (2). The target variable \texttt{Price\_Category} was encoded as Low (0), Medium (1), and High (2). Ordinal encoding was applied to features with an inherent ordering. This encoding was implemented using explicit numerical mapping in order to preserve the relative order among categories.
+
+
+\section{Missing Value Imputation}
+
+Missing values in the dataset were handled using different imputation strategies based on feature characteristics. The feature \texttt{Size\_sqft} was imputed using the mean value. Numerical features such as \texttt{Num\_Bedrooms}, \texttt{Num\_Bathrooms}, \texttt{Floor\_Number}, \texttt{Building\_Age\_Years}, and \texttt{Distance\_to\_CityCenter\_km} were imputed using the median to reduce the impact of outliers. Categorical features including \texttt{Has\_Balcony}, \texttt{Parking\_Available}, \texttt{Nearby\_Schools}, \texttt{Security\_Level}, and \texttt{Location} were imputed using the most frequent value.
+
+\section{Correlation Analysis}
+
+A correlation matrix was computed using the Pearson correlation coefficient after encoding and imputing all features. The correlation matrix was visualized using a heatmap to analyze linear relationships between input features and the output feature.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/confusion_matrix.png}
+    \caption{Confusion matrix for Price Category classification}
+    \label{fig:confusion}
+\end{figure}
+
+
+\section{Interpretation of Correlation Results}
+
+The correlation analysis reveals that most input features exhibit \textbf{very weak linear correlation} with the target variable \texttt{Price\_Category}. The highest absolute correlation observed between any input feature and the target is below 0.06, indicating the absence of strong linear dependencies. This suggests that the relationship between features and the target variable is likely non-linear or influenced by interactions among multiple features rather than individual attributes.
+
+Additionally, correlations among input features are also generally low, implying minimal multicollinearity in the dataset. These observations justify the use of non-linear machine learning models, which are better suited to capture complex relationships that are not evident through linear correlation analysis.
+
+\section{Discussion}
+
+The weak linear correlations indicate that simple linear models may struggle to capture the underlying patterns in the data. Consequently, models capable of learning non-linear decision boundaries are expected to perform better on this task. The approximately balanced class distribution further ensures that classification models can be trained without significant bias toward any particular class.
+
 
 \chapter{Dataset pre-processing}
-Write content here.
+Real-world datasets often contain imperfections that can negatively impact machine learning model performance. In this study, several preprocessing challenges were identified and addressed systematically. Each issue is discussed below along with the corresponding solution applied.
+
+\section{Null and Missing Values}
+
+\textbf{Problem:}  
+The dataset contained null and missing values across multiple numerical and categorical features. Missing values can lead to biased results or errors during model training if not handled appropriately.
+
+\textbf{Solution and Justification:}  
+No rows or columns were removed from the dataset because the dataset is relatively small and limited in size. Removing data could have resulted in a significant loss of information. Instead, imputation techniques were applied. The feature \texttt{Size\_sqft} was imputed using the mean value, while numerical features such as \texttt{Num\_Bedrooms}, \texttt{Num\_Bathrooms}, \texttt{Floor\_Number}, \texttt{Building\_Age\_Years}, and \texttt{Distance\_to\_CityCenter\_km} were imputed using the median to reduce sensitivity to outliers. Categorical features were imputed using the most frequent value to preserve existing category distributions.
+
+\section{Categorical Variables}
+
+\textbf{Problem:}  
+Several features in the dataset were categorical in nature. Machine learning algorithms require numerical inputs and cannot directly process categorical values.
+
+\textbf{Solution and Justification:}  
+Categorical encoding was performed based on the nature of each feature. Binary categorical features were encoded using label encoding. Ordinal features were encoded using explicit numerical mapping to preserve the inherent hierarchical relationships within the data. This approach ensured that category ordering was retained where applicable while maintaining numerical compatibility with machine learning algorithms.
+
+\section{Feature Scaling}
+
+\textbf{Problem:}  
+The numerical features in the dataset were measured on different scales. Models such as Logistic Regression, K-Nearest Neighbors, Neural Networks, and Naive Bayes are sensitive to feature magnitude, which can bias model learning if scaling is not applied.
+
+\textbf{Solution and Justification:}  
+Standardization was applied to numerical features including \texttt{Size\_sqft}, \texttt{Num\_Bedrooms}, \texttt{Num\_Bathrooms}, \texttt{Floor\_Number}, \texttt{Building\_Age\_Years}, and \texttt{Distance\_to\_CityCenter\_km} using the \texttt{StandardScaler}. The scaler was fitted only on the training data and subsequently applied to the test data to prevent data leakage. Feature scaling ensured that all numerical attributes contributed equally during model training.
+
+\section{Class Imbalance Handling}
+
+\textbf{Problem:}  
+Although the dataset was approximately balanced, minor class distribution differences existed in the target variable \texttt{Price\_Category}. Such imbalance can affect the performance of certain classification models.
+
+\textbf{Solution and Justification:}  
+The Synthetic Minority Over-sampling Technique (SMOTE) was applied to the training dataset after feature scaling. SMOTE generates synthetic samples for minority classes, improving class representation while preserving original test data distribution. This approach was applied exclusively to the training data to avoid information leakage and to enhance model generalization.
+
+\section{Summary}
+
+The preprocessing steps applied in this study addressed missing values, categorical data handling, feature scaling, and class imbalance. These steps ensured that the dataset was suitable for training a diverse set of machine learning models, including Logistic Regression, Decision Trees, Random Forests, K-Nearest Neighbors, Naive Bayes, Neural Networks, and K-Means clustering.
+
 
 \chapter{Dataset splitting}
-Write content here.
+Proper dataset splitting is essential to ensure unbiased model evaluation and reliable performance estimation. In this study, the dataset splitting strategy was carefully designed to preserve class distributions and prevent data leakage.
+
+\section{Data Splitting Strategy}
+
+\textbf{Problem:}  
+Random splitting of classification datasets may lead to unequal class distributions between training and testing sets, especially when multiple classes are present. Such imbalance can result in biased model evaluation.
+
+\textbf{Solution and Justification:}  
+A stratified splitting strategy was employed to divide the dataset while preserving the original class proportions of the target variable \texttt{Price\_Category}. Stratified splitting ensures that each class is proportionally represented in both the training and testing sets, which is particularly important for multi-class classification problems.
+
+\section{Train-Test Split Ratio}
+
+\textbf{Problem:}  
+Selecting an inappropriate split ratio may lead to insufficient training data or unreliable testing performance.
+
+\textbf{Solution and Justification:}  
+The dataset was divided into a training set and a testing set using a 75\%–25\% split. This ratio provides a sufficient number of samples for model training while reserving an adequate portion of the data for unbiased evaluation.
+
+\section{Handling of Validation Data}
+
+\textbf{Problem:}  
+Model evaluation may be compromised if test data is used during model selection or parameter tuning.
+
+\textbf{Solution and Justification:}  
+No separate validation set was used in this study. Model evaluation was performed exclusively on the test set
 
 \chapter{Model training \& testing}
-Write content here.
-\section{k-Nearest Neighbors}
-Write content here.
-\section{Decision Tree}
-Write content here.
+This section presents the supervised and unsupervised learning models applied in this study. Each supervised model is briefly introduced, followed by a table reporting its evaluation metrics. Finally, a separate subsection explains why the overall model scores are low.
+
+\section{Supervised Learning Models}
+
+All supervised models were trained on the training dataset and evaluated on an unseen test dataset. Performance was measured using accuracy, precision, recall, and F1-score.
+
+\section{Decision Tree Classifier}
+
+A Decision Tree classifier was applied due to its interpretability and its ability to model non-linear relationships through decision rules.
+
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for Decision Tree Classifier}
+\label{tab:dt_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 35.00 \\
+Precision & 34.97 \\
+Recall & 35.00 \\
+F1-score & 34.93 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\section{Random Forest Classifier}
+
+Random Forest is an ensemble model that aggregates multiple decision trees to improve stability and reduce variance.
+
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for Random Forest Classifier}
+\label{tab:rf_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 35.33 \\
+Precision (macro) & 35.21 \\
+Recall (macro) & 35.27 \\
+F1-score (macro) & 35.23 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
 \section{Logistic Regression}
-Write content here.
-\section{Linear Regression}
-Write content here.
-\section{Naive Bayes}
-Write content here.
+
+Logistic Regression was used as a baseline linear classifier for multi-class classification.
+
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for Logistic Regression}
+\label{tab:lr_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 33.00 \\
+Precision (macro) & 33.58 \\
+Recall (macro) & 33.00 \\
+F1-score (macro) & 33.14 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\section{Naive Bayes Classifier}
+
+Naive Bayes is a probabilistic classifier based on Bayes' theorem. It is computationally efficient and commonly used as a baseline model.
+
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for Naive Bayes Classifier}
+\label{tab:nb_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 34.00 \\
+Precision (macro) & 34.73 \\
+Recall (macro) & 33.95 \\
+F1-score (macro) & 34.16 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\section{K-Nearest Neighbors (KNN)}
+
+KNN is a distance-based classifier that predicts the class of a sample by majority voting among its nearest neighbors.
+
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for K-Nearest Neighbors Classifier}
+\label{tab:knn_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 36.33 \\
+Precision (macro) & 35.92 \\
+Recall (macro) & 36.18 \\
+F1-score (macro) & 35.34 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
 \section{Neural Network}
-Write content here.
-\pagebreak
-\section{K-Means Clustering}
-Write content here.
 
-\chapter{Model selection/Comparison analysis}
-Write content here.
+A Neural Network classifier implemented using \texttt{sklearn} with a softmax output layer was used to capture non-linear relationships.
 
+\begin{table}[!htbp]
+\centering
+\caption{Performance Metrics for Neural Network Classifier}
+\label{tab:nn_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value (\%)} \\
+\hline
+Accuracy & 33.33 \\
+Precision & 11.11 \\
+Recall & 33.33 \\
+F1-score & 16.67 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\section{Unsupervised Learning: K-Means Clustering}
+
+To treat the problem as an unsupervised learning task, K-Means clustering was applied to explore inherent structure in the dataset. The number of clusters was set to $k=3$, corresponding to the number of price categories.
+
+\begin{table}[!htbp]
+\centering
+\caption{K-Means Clustering Evaluation}
+\label{tab:kmeans_results}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Metric} & \textbf{Value} \\
+\hline
+Number of Clusters ($k$) & 3 \\
+Silhouette Score & 0.088 \\
+\hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+\section{Discussion on Low Model Performance}
+
+The relatively low performance observed across supervised models can be explained by intrinsic characteristics of the dataset. The correlation analysis showed very weak linear relationships between individual input features and the target variable, indicating that no single feature strongly predicts \texttt{Price\_Category}. Furthermore, the feature distributions of the three classes overlap substantially, which creates ambiguous decision boundaries and increases misclassification.
+
+The dataset size also limits the ability of models---especially Neural Networks---to learn stable and generalizable patterns. Although SMOTE was applied after splitting and scaling to address minor class imbalance, synthetic oversampling cannot resolve strong overlap between classes and may not improve separability. The low Silhouette Score obtained from K-Means clustering further supports this conclusion, indicating that the feature space does not naturally form well-separated clusters. As a result, both supervised classification and unsupervised clustering remain challenging for this dataset.
+
+
+
+\chapter{Model Comparison Analysis}
+
+This section compares all classification models based on predictive performance. The comparison is presented in three stages: (i) analysis of accuracy, precision, recall, and F1-score, (ii) confusion matrix interpretation, and (iii) macro AUC score analysis. (ROC curve discussion is intentionally omitted here and will be included later.)
+
+\section{Accuracy, Precision, Recall, and F1-score Analysis}
+
+The overall performance of the supervised classifiers is low. Since the task is a three-class classification problem, a random baseline accuracy is approximately $1/3 \approx 33.33\%$. Most models achieve accuracy values close to this baseline, indicating that the classes are difficult to separate using the current feature set.
+
+Among the tested models, K-Nearest Neighbors (KNN) achieved the highest accuracy (36.33\%), followed by Random Forest (35.33\%) and Decision Tree (35.00\%). Naive Bayes achieved 34.00\% accuracy, while Logistic Regression and the Neural Network achieved 33.00\% and 33.33\%, respectively. The macro-averaged precision, recall, and F1-score values follow the same trend and remain close to the accuracy scores, suggesting consistent but weak classification ability across models.
+
+The Neural Network model reported particularly low precision (11.11\%) while maintaining recall near the baseline (33.33\%). This pattern indicates a high false-positive rate for at least one class, which reduces precision substantially and results in a low F1-score (16.67\%). This suggests unstable class discrimination under the current training configuration.
+
+\section{Confusion Matrix Analysis}
+
+Confusion matrices provide a detailed view of class-wise performance by showing how frequently each true class is predicted as each output class. Across all models, the diagonal values (correct predictions) are only moderately larger than off-diagonal values (misclassifications). This indicates substantial overlap among the three classes and frequent confusion between categories.
+
+\subsection{Decision Tree}
+Figure~\ref{fig:cm_dt} shows the confusion matrix for the Decision Tree classifier.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_dt.png}
+\caption{Confusion Matrix for Decision Tree Classifier}
+\label{fig:cm_dt}
+\end{figure}
+
+The Decision Tree shows moderate correct predictions but misclassifies all classes at similar rates, implying that the learned splits are not strongly discriminative.
+\FloatBarrier
+
+
+\subsection{Random Forest}
+Figure~\ref{fig:cm_rf} shows the confusion matrix for the Random Forest classifier.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_rf.png}
+\caption{Confusion Matrix for Random Forest Classifier}
+\label{fig:cm_rf}
+\end{figure}
+
+Random Forest slightly improves correct classification for the middle class (37 correct), but still shows substantial confusion across classes, indicating limited separability even with ensemble learning.
+\FloatBarrier
+
+
+\subsection{Logistic Regression}
+Figure~\ref{fig:cm_lr} shows the confusion matrix for the Logistic Regression classifier.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_lr.png}
+\caption{Confusion Matrix for Logistic Regression classifier}
+\label{fig:cm_lr}
+\end{figure}
+
+Logistic Regression shows heavy misclassification into the third column (e.g., 44 and 42), suggesting that a linear decision boundary is insufficient and the model tends to assign samples disproportionately to one class.
+\FloatBarrier
+
+
+\subsection{Naive Bayes}
+
+Figure~\ref{fig:cm_nb} shows the confusion matrix for the Naive Bayes classifier.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_nb.png}
+\caption{Confusion Matrix for Naive Bayes Classifier}
+\label{fig:cm_nb}
+\end{figure}
+
+Naive Bayes frequently predicts the third class (notably 47), reflecting that its conditional independence assumption does not align well with the feature relationships in the dataset.
+\FloatBarrier
+
+
+\subsection{K-Nearest Neighbors (KNN)}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_knn.png}
+\caption{Confusion Matrix for K-Nearest Neighbors Classifier}
+\label{fig:cm_knn}
+\end{figure}
+
+KNN achieves the best performance for the first class (54 correct), but still suffers from considerable confusion in the remaining classes, which is consistent with the limited overall accuracy.
+\FloatBarrier
+
+
+\subsection{Neural Network}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{images/cm_nn.png}
+\caption{Confusion Matrix for Neural Network Classifier}
+\label{fig:cm_nn}
+\end{figure}
+
+The Neural Network exhibits weak diagonal dominance, especially for the third class (23 correct). The spread of off-diagonal values indicates poor class discrimination, consistent with its low precision and F1-score.
+\FloatBarrier
+
+
+\section{AUC Score Analysis (ROC Curve Omitted Here)}
+
+To further evaluate classification performance, macro-averaged AUC scores were computed using the One-vs-Rest (OvR) strategy. AUC values near 0.50 indicate weak class separability and performance close to random ranking.
+
+\subsection{Macro AUC (Scaled Features)}
+The macro AUC (OvR) values for scaled features are:
+\begin{itemize}
+    \item Decision Tree: 0.5124
+    \item Random Forest: 0.5204
+    \item Logistic Regression: 0.4813
+    \item Naive Bayes: 0.4860
+    \item KNN: 0.5259
+    \item Neural Network: 0.4987
+\end{itemize}
+KNN achieved the highest scaled AUC (0.5259), followed by Random Forest (0.5204). However, all values remain close to 0.50, confirming weak separability among classes.
+
+\subsection{Macro AUC (Unscaled Features)}
+The macro AUC (OvR) values for unscaled features are:
+\begin{itemize}
+    \item Decision Tree: 0.4914
+    \item Random Forest: 0.5193
+    \item Logistic Regression: 0.4688
+    \item Naive Bayes: 0.5000
+    \item KNN: 0.4825
+    \item Neural Network: 0.5078
+\end{itemize}
+A noticeable drop is observed for KNN when using unscaled features (0.4825), which is expected because KNN relies on distance computations that are highly sensitive to feature scaling.
+
+% ===================== ROC FIGURES + ANALYSIS (LaTeX) =====================
+% Required packages:
+
+
+\section{ROC Curves (Multiclass One-vs-Rest)}
+
+Figure~\ref{fig:roc_all_models_scaled_unscaled} presents the ROC curves for all six classifiers using the One-vs-Rest (OvR) strategy. 
+Each image contains two panels: \textit{scaled features} (left) and \textit{unscaled features} (right). 
+Overall, most curves lie close to the random baseline (diagonal), consistent with AUC values near $0.50$--$0.53$, indicating modest class separability.
+
+
+% ---- Page 1 ----
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_decision_tree.png}
+  \caption{Decision Tree: ROC curves (scaled vs unscaled).}
+  \label{fig:roc_dt_big}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_random_forest.png}
+  \caption{Random Forest: ROC curves (scaled vs unscaled).}
+  \label{fig:roc_rf_big}
+\end{figure}
+
+\clearpage
+
+% ---- Page 2 ----
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_logistic_regression.png}
+  \caption{Logistic Regression: ROC curves (scaled vs unscaled).}
+  \label{fig:roc_lr_big}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_naive_bayes.png}
+  \caption{Naive Bayes: ROC curves (scaled vs unscaled).}
+  \label{fig:roc_nb_big}
+\end{figure}
+
+\clearpage
+
+% ---- Page 3 ----
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_knn.png}
+  \caption{KNN: ROC curves (scaled vs unscaled).}
+  \label{fig:roc_knn_big}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1\textwidth]{images/roc_mlp.png}
+  \caption{Neural Network (MLP): ROC curves (scaled vs unscaled).}
+  \label{fig:roc_mlp_big}
+\end{figure}
+
+
+\subsection{Interpretation of ROC Curves}
+\begin{itemize}
+  \item \textbf{Overall performance near chance:} 
+  Across models, the ROC curves generally remain close to the diagonal, consistent with micro/macro AUC values around $0.48$--$0.53$. 
+  This suggests the feature set provides limited discrimination among the three price categories.
+
+  \item \textbf{Effect of scaling:}
+  The most visible improvement with scaling is expected for \textbf{KNN}, where scaled performance improves substantially compared to unscaled.
+  In contrast, \textbf{Random Forest} curves should appear similar in both panels, as tree-based models are typically insensitive to feature scaling.
+
+  \item \textbf{Class-wise difficulty:}
+  The ROC curve for \textbf{Class 0} is generally expected to be higher than the other classes for most models, indicating it is the easiest class to separate.
+  \textbf{Class 2} often produces curves close to (or occasionally below) the diagonal for several models, indicating it is the most challenging class.
+
+  \item \textbf{Model-specific behavior:}
+  \begin{itemize}
+    \item \textbf{KNN (scaled):} strongest overall separation; scaled curves should consistently dominate unscaled curves.
+    \item \textbf{Random Forest:} stable behavior; minimal difference between scaled and unscaled panels.
+    \item \textbf{Logistic Regression and Naive Bayes:} weaker separation, especially for Class 2; curves may hug the diagonal more closely.
+    \item \textbf{MLP:} scaling does not consistently improve performance in this experiment; unscaled curves may be slightly better for some classes.
+  \end{itemize}
+\end{itemize}
+
+
+\section{Summary}
+
+KNN achieved the best overall performance, yielding the highest accuracy and the strongest scaled micro/macro ROC–AUC, while Random Forest remained the most consistent model with minimal sensitivity to feature scaling. The confusion matrices reveal considerable cross-class confusion for every classifier, and the ROC–AUC values clustering near 0.50 indicate that the current feature set provides only limited separability among the three price categories. A detailed ROC-curve discussion (including scaled vs. unscaled comparisons and class-wise behavior) is presented in the following subsection.
 
 \chapter{Conclusion}
-Write content here.
+
+This project investigated the prediction of residential property price categories (\texttt{Low}, \texttt{Medium}, \texttt{High}) using multiple supervised learning models and one unsupervised clustering approach. The supervised models evaluated were Decision Tree, Random Forest, Logistic Regression, Naive Bayes, K-Nearest Neighbors, and a Neural Network, while K-Means was applied to explore whether natural clusters exist in the feature space.
+
+\section{Understanding from the Results}
+
+The experimental results show that all supervised models achieved relatively low predictive performance. Accuracy values ranged approximately from 33\% to 36\%, which is close to the random baseline for a three-class classification task ($\approx 33.33\%$). Among the supervised approaches, K-Nearest Neighbors achieved the best overall accuracy (36.33\%) and also produced the highest macro AUC in the scaled setting (0.5259). Random Forest produced stable results with slightly lower accuracy (35.33\%) and competitive AUC values.
+
+The unsupervised K-Means clustering produced a low Silhouette Score (0.088), indicating weak cluster separation. This suggests that the dataset does not naturally form well-separated clusters in the given feature space, which is consistent with the difficulty observed in supervised classification.
+
+\section{Comments on Model Performance}
+
+Overall, the models struggled to correctly discriminate among the three price categories. The confusion matrix analysis showed substantial misclassification across classes for all models, indicating overlapping class distributions. Feature scaling improved the performance of distance-based methods such as KNN, which is expected because distance calculations are sensitive to feature magnitude. In contrast, tree-based models showed minor changes with scaling, as they are generally less dependent on feature scaling.
+
+The Neural Network achieved accuracy close to baseline but exhibited very low precision, suggesting unstable class predictions and high false positives. This outcome indicates that the model configuration and available data were not sufficient to learn strong decision boundaries for the three classes.
+
+\section{Reasons for Observed Results}
+
+The low performance can be explained by intrinsic characteristics of the dataset and the classification task:
+\begin{itemize}
+    \item \textbf{Weak feature--target relationships:} Correlation analysis indicated very weak linear relationships between individual features and \texttt{Price\_Category}, implying that no single attribute strongly predicts the output.
+    \item \textbf{Overlapping class distributions:} The feature values for different classes overlap substantially, creating ambiguous decision boundaries and increasing misclassification between neighboring categories.
+    \item \textbf{Limited separability in feature space:} The low Silhouette Score from K-Means supports the conclusion that the feature space does not naturally separate into distinct groups corresponding to the price categories.
+    \item \textbf{Dataset size and complexity:} The dataset size is limited relative to the complexity of a three-class classification task, which restricts the learning capability of more complex models such as Neural Networks.
+    \item \textbf{Effect of oversampling:} Although SMOTE was applied after splitting and scaling to address minor imbalance, oversampling cannot resolve class overlap and may not significantly improve separability when the feature patterns are not strongly discriminative.
+\end{itemize}
+
+\section{Challenges Faced}
+
+Several challenges were encountered during the project:
+\begin{itemize}
+    \item \textbf{Handling missing values:} The dataset contained missing values in both numerical and categorical features, requiring careful imputation strategies (mean/median/mode) to avoid information loss.
+    \item \textbf{Encoding categorical features:} Multiple categorical features required encoding using a combination of label encoding and ordinal mapping while preserving valid hierarchy where applicable.
+    \item \textbf{Preventing data leakage:} Preprocessing steps such as feature scaling and SMOTE needed to be applied strictly after the train-test split and only on the training data to maintain unbiased evaluation.
+    \item \textbf{Low feature separability:} The limited separability between classes made it difficult for all models to achieve strong performance, requiring careful interpretation beyond accuracy alone.
+    \item \textbf{Model comparison across diverse algorithms:} Ensuring a consistent evaluation framework across multiple models (metrics, scaling, and probability outputs for AUC) was necessary for fair comparison.
+\end{itemize}
+
+\section{Future Improvements}
+
+To improve predictive performance, future work may focus on incorporating additional informative features, applying feature engineering, exploring advanced models (e.g., gradient boosting), and performing systematic hyperparameter tuning with cross-validation.
 
 \end{document}
