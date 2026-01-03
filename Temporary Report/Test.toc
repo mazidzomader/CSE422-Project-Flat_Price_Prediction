@@ -1,0 +1,49 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Dataset description}{2}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Class Distribution and Imbalance Analysis}{2}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Categorical Feature Encoding}{2}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Missing Value Imputation}{2}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Correlation Analysis}{3}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Interpretation of Correlation Results}{3}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Discussion}{3}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Dataset pre-processing}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Null and Missing Values}{5}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Categorical Variables}{5}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Feature Scaling}{5}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Class Imbalance Handling}{6}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Summary}{6}{section.3.5}%
+\contentsline {chapter}{\numberline {4}Dataset splitting}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Data Splitting Strategy}{7}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Train-Test Split Ratio}{7}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Handling of Validation Data}{7}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Model training \& testing}{8}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Supervised Learning Models}{8}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Decision Tree Classifier}{8}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Random Forest Classifier}{8}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Logistic Regression}{9}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Naive Bayes Classifier}{9}{section.5.5}%
+\contentsline {section}{\numberline {5.6}K-Nearest Neighbors (KNN)}{9}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Neural Network}{9}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Unsupervised Learning: K-Means Clustering}{10}{section.5.8}%
+\contentsline {section}{\numberline {5.9}Discussion on Low Model Performance}{10}{section.5.9}%
+\contentsline {chapter}{\numberline {6}Model Comparison Analysis}{11}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Accuracy, Precision, Recall, and F1-score Analysis}{11}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Confusion Matrix Analysis}{11}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Decision Tree}{11}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Random Forest}{12}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Logistic Regression}{13}{subsection.6.2.3}%
+\contentsline {subsection}{\numberline {6.2.4}Naive Bayes}{14}{subsection.6.2.4}%
+\contentsline {subsection}{\numberline {6.2.5}K-Nearest Neighbors (KNN)}{14}{subsection.6.2.5}%
+\contentsline {subsection}{\numberline {6.2.6}Neural Network}{15}{subsection.6.2.6}%
+\contentsline {section}{\numberline {6.3}AUC Score Analysis (ROC Curve Omitted Here)}{16}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}Macro AUC (Scaled Features)}{16}{subsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.3.2}Macro AUC (Unscaled Features)}{16}{subsection.6.3.2}%
+\contentsline {section}{\numberline {6.4}ROC Curves (Multiclass One-vs-Rest)}{17}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Interpretation of ROC Curves}{19}{subsection.6.4.1}%
+\contentsline {section}{\numberline {6.5}Summary}{20}{section.6.5}%
+\contentsline {chapter}{\numberline {7}Conclusion}{21}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Understanding from the Results}{21}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Comments on Model Performance}{21}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Reasons for Observed Results}{21}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Challenges Faced}{22}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Future Improvements}{22}{section.7.5}%

@@ -12,8 +12,18 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref} % For basic bookmarks
+\usepackage{bookmark}
 
-
+\hypersetup{
+    bookmarks=true,
+    bookmarksopen=true, % Open tree by default
+    bookmarksnumbered=true,
+    colorlinks=true, % Optional: color links
+    linkcolor=blue,
+    urlcolor=cyan,
+}
 % safer caption spacing (prevents caption colliding with table border)
 \setlength{\abovecaptionskip}{8pt}
 \setlength{\belowcaptionskip}{6pt}
@@ -34,7 +44,7 @@
 % COVER PAGE (no page number)
 % ------------------------------------------------
 \pagenumbering{gobble} % hide page number
-
+\pdfbookmark[0]{Cover Page}{toc}
 \begin{titlepage}
     \begin{center}
     
@@ -96,7 +106,7 @@
 \clearpage
 \pagenumbering{roman}
 \setcounter{page}{1}
-
+\pdfbookmark[0]{Table of Contents}{toc}
 \tableofcontents
 
 \clearpage
