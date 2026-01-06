@@ -80,9 +80,8 @@ The dataset includes the following features:
 - All features retained.
 
 ### 5️⃣ Train–Validation–Test Split
-- 70% Training
-- 10% Validation
-- 20% Testing  
+- 75% Training
+- 25% Testing  
 (Split performed **before scaling** to avoid data leakage.)
 
 ### 6️⃣ Feature Scaling
